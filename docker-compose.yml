@@ -1,0 +1,46 @@
+version: "3.8"
+
+networks:
+  bot-help-network:
+    driver: bridge
+
+services:
+  bot-help.nginx:
+    env_file: .env
+    restart: always
+    container_name: bot-help.nginx
+    ports:
+      - ${APP_PORT}:80
+    image: nginx:stable-alpine
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    depends_on:
+      - bot-help.php
+    links:
+      - bot-help.php
+    networks:
+      - bot-help-network
+
+  bot-help.php:
+    container_name: bot-help.php
+    build:
+      context: docker/php
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/var/www/
+    restart: always
+    networks:
+      - bot-help-network
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672" # порт для RabbitMQ management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    networks:
+      - bot-help-network
+

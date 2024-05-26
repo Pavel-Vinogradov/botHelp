@@ -16,9 +16,14 @@ services:
     App\:
         resource: '../src/'
         exclude:
-            - '../src/DependencyInjection/'
+            - '../src/Core/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-
+    App\Core\Listener\ExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+    App\Modules\Event\Service\EventMessageHandler:
+        tags:
+            - { name: messenger.message_handler }
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -1,0 +1,6 @@
+framework:
+    messenger:
+        transports:
+            amqp: '%env(MESSENGER_TRANSPORT_DSN)%'
+        routing:
+            'App\Modules\Event\DTO\EventMessageData': amqp
